@@ -1,0 +1,5 @@
+comment = 'explain_ui:  Created by pgrx'
+default_version = '@CARGO_VERSION@'
+module_pathname = '$libdir/explain_ui'
+relocatable = false
+superuser = true
