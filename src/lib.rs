@@ -30,7 +30,7 @@ fn explain_ui(query_text: String) -> Result<String> {
     let form_data = format!(
         "query={}&title={}&plan={}",
         urlencoding::encode(&query_text),
-        urlencoding::encode(&query_text),
+        urlencoding::encode(""),
         urlencoding::encode(&plan_json_str)
     );
 
