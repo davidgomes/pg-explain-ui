@@ -3,7 +3,36 @@
 This is a simple Postgres extension that allows you to easily jump into a visual plan UI for any SQL query.
 
 ```sql
-explain_ui=# select explain_ui($$SELECT
+CREATE TABLE authors (
+    author_id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE publishers (
+    publisher_id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE categories (
+    category_id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE books (
+    book_id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    author_id INT NOT NULL REFERENCES authors(author_id),
+    publisher_id INT NOT NULL REFERENCES publishers(publisher_id),
+    publication_date DATE
+);
+
+CREATE TABLE book_categories (
+    book_id INT NOT NULL REFERENCES books(book_id),
+    category_id INT NOT NULL REFERENCES categories(category_id),
+    PRIMARY KEY (book_id, category_id)
+);
+
+SELECT explain_ui($$SELECT
     b.title AS "Book Title",
     a.name AS "Author",
     p.name AS "Publisher",
@@ -27,7 +56,7 @@ ORDER BY
 $$);
                     explain_ui
 --------------------------------------------------
- https://explain.dalibo.com/plan/g1499cc8aa7d1086
+ https://explain.dalibo.com/plan/ccg2e5fedd913bb7
 (1 row)
 ```
 
