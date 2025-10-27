@@ -8,17 +8,8 @@ use urlencoding;
 pgrx::pg_module_magic!();
 
 pub fn get_query_plan(query_text: &str) -> Result<pgrx::Json> {
-    Ok(Spi::connect(|mut client| {
-        client
-            .update(
-                &format!("EXPLAIN (ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT JSON) {query_text}"),
-                None,
-                None,
-            )?
-            .first()
-            .get_one::<pgrx::Json>()
-    })?
-    .unwrap())
+    Ok(Spi::get_one::<pgrx::Json>(&format!("EXPLAIN (ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT JSON) {query_text}"))?
+        .unwrap())
 }
 
 #[pg_extern]
