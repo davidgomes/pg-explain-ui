@@ -1,6 +1,6 @@
 use pgrx::prelude::*;
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 use reqwest::blocking::Client;
 use serde_json;
 use urlencoding;
@@ -8,17 +8,8 @@ use urlencoding;
 pgrx::pg_module_magic!();
 
 pub fn get_query_plan(query_text: &str) -> Result<pgrx::Json> {
-    Ok(Spi::connect(|mut client| {
-        client
-            .update(
-                &format!("EXPLAIN (ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT JSON) {query_text}"),
-                None,
-                None,
-            )?
-            .first()
-            .get_one::<pgrx::Json>()
-    })?
-    .unwrap())
+    let query = format!("EXPLAIN (ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT JSON) {query_text}");
+    Spi::get_one::<pgrx::Json>(&query)?.context("EXPLAIN returned no query plan")
 }
 
 #[pg_extern]
